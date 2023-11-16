@@ -14,8 +14,8 @@ background_surf = pygame.image.load("Images\Backgrounds\Black.png").convert_alph
 player = pygame.sprite.GroupSingle()
 player.add(player_class.Player())
 
-player_surf = pygame.image.load("Images\Spaceships\Green_ship.png").convert_alpha()
-player_rect = player_surf.get_rect(center = (screen_width*0.5,screen_height*0.5))
+#player_surf = pygame.image.load("Images\Spaceships\Green_ship.png").convert_alpha()
+#player_rect = player_surf.get_rect(center = (screen_width*0.5,screen_height*0.5))
 
 while True:
     for event in pygame.event.get():
@@ -26,11 +26,11 @@ while True:
     #show background
     screen.blit(background_surf, (0,0))
     #move player
-    player_rect.y += -1
+    #player_rect.y += -1
     #draw images on screen
     player.draw(screen)
     #update all objects
-    #player.update()
+    player.update()
 
     pygame.display.update()
     clock.tick(60)
