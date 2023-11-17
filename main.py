@@ -1,5 +1,6 @@
 import pygame
 import player_class
+import level
 from sys import exit
 
 pygame.init()
@@ -8,14 +9,8 @@ screen = pygame.display.set_mode((screen_width,screen_height)) #can be scaled up
 pygame.display.set_caption("Space Geckos")
 clock = pygame.time.Clock()
 
-background_surf = pygame.image.load("Images\Backgrounds\Black.png").convert_alpha()
-
-#create a GroupSingle instance with our Player class
-player = pygame.sprite.GroupSingle()
-player.add(player_class.Player())
-
-#player_surf = pygame.image.load("Images\Spaceships\Green_ship.png").convert_alpha()
-#player_rect = player_surf.get_rect(center = (screen_width*0.5,screen_height*0.5))
+#create level object
+level = level.Level()
 
 while True:
     for event in pygame.event.get():
@@ -23,14 +18,10 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
-    #show background
-    screen.blit(background_surf, (0,0))
-    #move player
-    #player_rect.y += -1
-    #draw images on screen
-    player.draw(screen)
-    #update all objects
-    player.update()
+
+    #update and draw level with the player and all objects
+    level.update()
+    level.draw(screen)
 
     pygame.display.update()
     clock.tick(60)

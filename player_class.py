@@ -8,7 +8,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.og_surf
         self.rect = self.image.get_rect(center = (480,270))
         self.movespeed = 5
-        self.direction = 0
+        #self.direction = (0,0)
 
     def update(self):
         #update for one frame
@@ -37,13 +37,55 @@ class Player(pygame.sprite.Sprite):
             #self.rect = self.image.get_rect(center = (x_new,y_new))
 
     def rotate(self):
-        #get the mouse position
-        x_mouse, y_mouse = pygame.mouse.get_pos()
-        #calculate angle between player and mouse
-        center_x, center_y = self.rect.center
-        angle_rad = math.atan2((y_mouse-center_y),(x_mouse-center_x))
-        self.direction = math.degrees(angle_rad)
+        #define direction
+        direction = self.get_direction_vector()
+        angle_rad = math.atan2((direction[1]),(direction[0]))
+        direction = math.degrees(angle_rad)
         
-        self.image = pygame.transform.rotate(self.og_surf, -self.direction-90) #angle_deg-90, since 0 grad means looking up
+        self.image = pygame.transform.rotate(self.og_surf, -direction-90) #angle_deg-90, since 0 grad means looking up
         self.rect = self.image.get_rect(center=self.rect.center)
-    #rotate player depending on mouse position
+
+    def shoot_bullet(self):
+        if pygame.mouse.get_pressed()[0]:
+            #define direction of bullet
+            #create normalized direction vector from the angle of the ship
+            bullet_direction = self.get_direction_vector()
+
+            #define starting position of bullet
+            #depending on rotation and radius of ship
+            ship_radius = 16
+            bullet_x = self.rect.center[0] + ship_radius * bullet_direction[0]
+            bullet_y = self.rect.center[1] + ship_radius * bullet_direction[1]
+            bullet_position = (bullet_x,bullet_y)
+
+            #create Laser object
+            return Laser(bullet_position, bullet_direction)
+        
+    def get_direction_vector(self):
+        x_mouse, y_mouse = pygame.mouse.get_pos()
+        center_x, center_y = self.rect.center
+        delta_x = x_mouse-center_x
+        delta_y = y_mouse-center_y
+        norm = ((delta_x**2+delta_y**2)**(1/2))
+        direction_vector = (delta_x/norm, delta_y/norm)
+        return direction_vector
+
+class Laser(pygame.sprite.Sprite):
+    def __init__(self, position, direction):
+        super().__init__()
+        self.direction = direction
+        self.og_surf = pygame.image.load("Images\Objects\Green_laser.png").convert_alpha()
+        self.image = self.og_surf
+        self.rect = self.image.get_rect(center = position)
+        self.movespeed = 10
+        #rotate image depending on position:
+
+    def update_position(self):
+        #step = self.direction*self.movespeed
+        #self.rect.x += step[0]    
+        #self.rect.y += step[1]
+        self.rect.x += self.direction[0]*self.movespeed
+        self.rect.y += self.direction[1]*self.movespeed
+
+    def update(self):
+        self.update_position()
